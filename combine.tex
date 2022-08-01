@@ -1,0 +1,9 @@
+\batchmode
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[1cm]{geometry}
+\usepackage{pdfpages}
+
+\begin{document}
+    \includepdfmerge[pages={1-}, nup=2x3, scale=0.9, delta=0 1cm]{out/combined.pdf}
+\end{document}
