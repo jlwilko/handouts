@@ -1,16 +1,22 @@
+#! /usr/bin/python3
 import subprocess
 import sys
 
+if (len(sys.argv) != 3):
+    print("Usage: python3 combine.py input.pdf output")
+    sys.exit()
 file = sys.argv[1]
+new_name = sys.argv[2]
 
 cmd = "rm sep/*"
 print(subprocess.run(cmd, shell=True))
+
 cmd = f"pdfseparate {file} sep/slides_%d.pdf"
 print(cmd)
 subprocess.run(cmd.split())
+
 ls = subprocess.Popen(('ls', 'sep'), stdout=subprocess.PIPE)
 no_pages = int(subprocess.check_output(("wc", "-l"), stdin=ls.stdout))
-
 
 s = ""
 
@@ -22,5 +28,5 @@ subprocess.run(cmd.split())
 
 cmd = f"pdflatex --output-directory=out combine.tex"
 subprocess.run(cmd.split())
-cmd = f"gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -sOutputFile=result.pdf out/combine.pdf"
+cmd = f"gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -sOutputFile={new_name}.pdf out/combine.pdf"
 subprocess.run(cmd.split())
