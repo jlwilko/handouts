@@ -8,6 +8,8 @@ if (len(sys.argv) != 3):
 file = sys.argv[1]
 new_name = sys.argv[2]
 
+# todo im adding a comment from the github ios app
+# AND SOME MORE STUFF HERE
 cmd = "rm sep/*"
 print(subprocess.run(cmd, shell=True))
 
