@@ -1,37 +1,35 @@
 #! /usr/bin/python3
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
+from pikepdf import Pdf
 import argparse
 import subprocess
 
 parser = argparse.ArgumentParser(description='Generate a note-taking pdf from a slide deck')
-parser.add_argument("-i", "--input", help="input file", required=True)
-parser.add_argument("-o", "--output", help="output file", required=True)
+parser.add_argument("-i", "--input", help="input filename", required=True)
+parser.add_argument("-o", "--output", help="output filename", required=True)
 
 args = parser.parse_args()
 
-file = args.input
-new_name = args.output
+input_file: str = args.input
+output_file: str = args.output
 
 # open the input pdf 
-pdf = PdfFileReader(file)
-template = PdfFileReader("notesslide.pdf")
-new_pdf = PdfFileWriter()
+pdf = Pdf.open(input_file)
+template = Pdf.open("notesslide.pdf")
+lines_page = template.pages[0]
+combined_pdf = Pdf.new()
 
 # paginate the pdf
-for page in range(pdf.getNumPages()):
-    # get the page
-    p = pdf.getPage(page)
-    # add the page to the new pdf
-    new_pdf.addPage(p)
+for i, page in enumerate(pdf.pages):
     # add the notes template
-    new_pdf.addPage(template.getPage(0))
+    combined_pdf.pages.append(lines_page)
+    # add the page to the new pdf
+    combined_pdf.pages.append(page)
 
 # write the new pdf
-with open(new_name, "wb") as f:
-    new_pdf.write(f)
+combined_pdf.save(output_file)
 
 cmd = f"pdflatex --output-directory=out combine.tex"
 subprocess.run(cmd.split())
-cmd = f"gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -sOutputFile={new_name} out/combine.pdf"
+cmd = f"gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -sOutputFile={output_file} out/combine.pdf"
 subprocess.run(cmd.split())
