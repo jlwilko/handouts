@@ -27,7 +27,7 @@ for i, page in enumerate(pdf.pages):
     combined_pdf.pages.append(page)
 
 # write the new pdf
-combined_pdf.save(output_file)
+combined_pdf.save("out/combined.pdf")
 
 cmd = f"pdflatex --output-directory=out combine.tex"
 subprocess.run(cmd.split())
